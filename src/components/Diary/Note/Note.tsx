@@ -5,11 +5,12 @@ import SaveIcon from "@material-ui/icons/Save";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import moment from "moment"
 
 const Note = () => {
   const [note, onNoteChange] = useState<string>("");
   const [noteList, onNoteListChange] = useState<Array<object>>([]);
-  const [date, onDateChange] = useState(new Date("2021-01-01T00:00:00"));
+  const [date, onDateChange] = useState(new Date("2021-01-01T00:00"));
   const addNote = () => {
     const currentNoteList = noteList;
     const currentNote = note;
@@ -26,7 +27,8 @@ const Note = () => {
     onNoteChange("");
   };
 
-  console.log(noteList);
+  console.log(moment(date).format("YYYY-MM-DDTkk:mm"));
+  console.log(date.toISOString().substring(0, 16));
   return (
     <div className="note">
       <div className="text-field">
@@ -71,7 +73,29 @@ const Note = () => {
           />
         </div>
       </div>
+
       <div className="notes-list">
+        <h2>Notes</h2>
+        <div className="datetime-picker">
+          <TextField
+            id="datetime-local-from"
+            label="From"
+            type="datetime-local"
+            defaultValue={moment(date).format("YYYY-MM-DDTHH:mm")}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <TextField
+            id="datetime-local-to"
+            label="To"
+            type="datetime-local"
+            defaultValue={moment(date).format("YYYY-MM-DDTHH:mm")}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+        </div>
         {noteList.length !== 0 ? <NoteList notes={noteList} /> : null}
       </div>
     </div>
