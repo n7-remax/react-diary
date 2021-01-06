@@ -1,19 +1,11 @@
 import { useState } from "react";
 import NoteList from "./NoteList";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import SaveIcon from "@material-ui/icons/Save";
+import DeleteIcon from "@material-ui/icons/Delete";
+import Button from "@material-ui/core/Button";
 
 import TextField from "@material-ui/core/TextField";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      "& .MuiTextField-root": {
-        margin: theme.spacing(1),
-        width: "25ch",
-      },
-    },
-  })
-);
 
 const Note = (props: any) => {
   const [note, onNoteChange] = useState<string>("");
@@ -25,10 +17,13 @@ const Note = (props: any) => {
     const newData = { note: currentNote as string, date: props.date as Date };
 
     onNoteListChange([...currentNoteList, newData]);
-    onNoteChange("")
+    onNoteChange("");
   };
   const onTextAreaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onNoteChange(event.target.value);
+  };
+  const OnNoteClear = () => {
+    onNoteChange("");
   };
 
   console.log(noteList);
@@ -47,13 +42,25 @@ const Note = (props: any) => {
           onChange={onTextAreaChange}
         />
       </div>
-      {/* <textarea
-        value={note}
-        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>): void =>
-          onNoteChange(e.target.value)
-        }
-      /> */}
-      <button onClick={addNote}>Save</button>
+      <div>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<SaveIcon />}
+          onClick={addNote}
+          disabled={note ? false : true}
+        >
+          Save
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          startIcon={<DeleteIcon />}
+          onClick={OnNoteClear}
+        >
+          Clear
+        </Button>
+      </div>
 
       {noteList.length !== 0 ? <NoteList notes={noteList} /> : null}
     </div>
