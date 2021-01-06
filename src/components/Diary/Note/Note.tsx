@@ -1,20 +1,20 @@
 import { useState } from "react";
 import NoteList from "./NoteList";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import DateTimePicker from "react-datetime-picker";
 import SaveIcon from "@material-ui/icons/Save";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Button from "@material-ui/core/Button";
-
 import TextField from "@material-ui/core/TextField";
 
-const Note = (props: any) => {
+const Note = () => {
   const [note, onNoteChange] = useState<string>("");
   const [noteList, onNoteListChange] = useState<Array<object>>([]);
+  const [date, onDateChange] = useState(new Date("2021-01-01T00:00:00"));
   const addNote = () => {
     const currentNoteList = noteList;
     const currentNote = note;
 
-    const newData = { note: currentNote as string, date: props.date as Date };
+    const newData = { note: currentNote as string, date: date as Date };
 
     onNoteListChange([...currentNoteList, newData]);
     onNoteChange("");
@@ -29,40 +29,51 @@ const Note = (props: any) => {
   console.log(noteList);
   return (
     <div className="note">
-      <h3>{props.date.toLocaleString()}</h3>
-      <div>
+      <div className="text-field">
         <TextField
           id="outlined-multiline-static"
           label="Make an entry"
           multiline
           rows={4}
-          variant="outlined"
+          variant="filled"
           fullWidth={true}
           value={note}
           onChange={onTextAreaChange}
         />
       </div>
-      <div>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<SaveIcon />}
-          onClick={addNote}
-          disabled={note ? false : true}
-        >
-          Save
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          startIcon={<DeleteIcon />}
-          onClick={OnNoteClear}
-        >
-          Clear
-        </Button>
+      <div className="text-area-controls">
+        <div className="buttons">
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<SaveIcon />}
+            onClick={addNote}
+            disabled={note ? false : true}
+          >
+            Save
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            startIcon={<DeleteIcon />}
+            onClick={OnNoteClear}
+          >
+            Clear
+          </Button>
+        </div>
+        <div className="datepicker">
+          <DateTimePicker
+            value={date}
+            onChange={onDateChange}
+            isCalendarOpen={false}
+            maxDetail="hour"
+            locale="en-EN"
+          />
+        </div>
       </div>
-
-      {noteList.length !== 0 ? <NoteList notes={noteList} /> : null}
+      <div className="notes-list">
+        {noteList.length !== 0 ? <NoteList notes={noteList} /> : null}
+      </div>
     </div>
   );
 };

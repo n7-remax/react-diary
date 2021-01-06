@@ -1,3 +1,14 @@
 body {
-    background-color: #E3EBE9;
+  background-color: #e3ebe9;
+}
+
+.diary {
+  padding-top: 200px;
+  width: 800px;
+  margin: 0 auto;
+}
+
+.text-area-controls {
+  display: flex;
+  justify-content: space-between;
 }
