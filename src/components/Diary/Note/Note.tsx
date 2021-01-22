@@ -138,7 +138,6 @@ const Note = () => {
             }}
           />
         </div>
-        {/* @ts-ignore */}
         {filteredList.length !== 0 ? <NoteList notes={filteredList} /> : null}
       </div>
     </div>
