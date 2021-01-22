@@ -5,30 +5,69 @@ import SaveIcon from "@material-ui/icons/Save";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import moment from "moment"
+import moment from "moment";
 
 const Note = () => {
-  const [note, onNoteChange] = useState<string>("");
-  const [noteList, onNoteListChange] = useState<Array<object>>([]);
-  const [date, onDateChange] = useState(new Date("2021-01-01T00:00"));
+  const [note, setNote] = useState<string>("");
+  const [noteList, setNoteList] = useState<object[]>([]);
+  const [filteredList, setFilteredList] = useState<object[]>([]);
+  const [date, setDate] = useState(new Date("2021-01-01T00:00"));
+  const [dateFrom, setDateFrom] = useState(new Date("2021-01-01T00:00"));
+  const [dateTo, setDateTo] = useState(new Date("2021-02-01T00:00"));
+
   const addNote = () => {
     const currentNoteList = noteList;
     const currentNote = note;
 
     const newData = { note: currentNote as string, date: date as Date };
 
-    onNoteListChange([...currentNoteList, newData]);
-    onNoteChange("");
+    setNoteList([...currentNoteList, newData]);
+    onDatePickerChange([...currentNoteList, newData]);
+    setNote("");
   };
   const onTextAreaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onNoteChange(event.target.value);
+    setNote(event.target.value);
   };
   const OnNoteClear = () => {
-    onNoteChange("");
+    setNote("");
   };
 
-  console.log(moment(date).format("YYYY-MM-DDTkk:mm"));
-  console.log(date.toISOString().substring(0, 16));
+  // Filtering notelist in range
+  const onDatePickerChange = (
+    notes = noteList,
+    from = dateFrom,
+    to = dateTo
+  ) => {
+    const result = notes.filter((item: any) => {
+      return (
+        item.date.getTime() >= from.getTime() &&
+        item.date.getTime() <= to.getTime()
+      );
+    });
+    console.log("result: ", result);
+    setFilteredList(result);
+    console.log("filtered list: ", result);
+  };
+
+  // Update datepicker range when it changes
+  const onDateFromChange = (value) => {
+    const parsedDate = new Date(value);
+    if (parsedDate! <= dateTo) {
+      console.log("dateFrom changed");
+      setDateFrom(parsedDate);
+      onDatePickerChange(undefined, parsedDate);
+    }
+  };
+
+  // Update datepicker range when it changes
+  const onDateToChange = (value) => {
+    const parsedDate = new Date(value);
+    if (parsedDate! >= dateFrom) {
+      console.log("dateTo changed");
+      setDateTo(parsedDate);
+      onDatePickerChange(undefined, undefined, parsedDate);
+    }
+  };
   return (
     <div className="note">
       <div className="text-field">
@@ -59,6 +98,7 @@ const Note = () => {
             color="secondary"
             startIcon={<DeleteIcon />}
             onClick={OnNoteClear}
+            disabled={note ? false : true}
           >
             Clear
           </Button>
@@ -66,7 +106,7 @@ const Note = () => {
         <div className="datepicker">
           <DateTimePicker
             value={date}
-            onChange={onDateChange}
+            onChange={setDate}
             isCalendarOpen={false}
             maxDetail="hour"
             locale="en-EN"
@@ -81,7 +121,8 @@ const Note = () => {
             id="datetime-local-from"
             label="From"
             type="datetime-local"
-            defaultValue={moment(date).format("YYYY-MM-DDTHH:mm")}
+            value={moment(dateFrom).format("YYYY-MM-DDTHH:mm")}
+            onChange={(e) => onDateFromChange(e.target.value)}
             InputLabelProps={{
               shrink: true,
             }}
@@ -90,13 +131,15 @@ const Note = () => {
             id="datetime-local-to"
             label="To"
             type="datetime-local"
-            defaultValue={moment(date).format("YYYY-MM-DDTHH:mm")}
+            value={moment(dateTo).format("YYYY-MM-DDTHH:mm")}
+            onChange={(e) => onDateToChange(e.target.value)}
             InputLabelProps={{
               shrink: true,
             }}
           />
         </div>
-        {noteList.length !== 0 ? <NoteList notes={noteList} /> : null}
+        {/* @ts-ignore */}
+        {filteredList.length !== 0 ? <NoteList notes={filteredList} /> : null}
       </div>
     </div>
   );
